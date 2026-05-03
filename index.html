@@ -6,10 +6,13 @@
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Synergy">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="Synergy Engine — Energy-based life management">
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Synergy Engine&quot;,&quot;short_name&quot;:&quot;Synergy&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%230a0a0f&quot;,&quot;theme_color&quot;:&quot;%230a0a0f&quot;,&quot;orientation&quot;:&quot;portrait&quot;}">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.svg">
+<link rel="icon" type="image/svg+xml" href="icon-192.svg">
+<meta name="apple-mobile-web-app-title" content="Synergy">
+<meta name="application-name" content="Synergy">
 <title>Synergy Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
@@ -893,8 +896,11 @@ body::before{
 
 <!-- INSTALL BANNER -->
 <div id="installBanner">
-  <span>📲 Add Synergy to your home screen</span>
-  <button onclick="installApp()">Install</button>
+  <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+    <span style="font-weight:600">📲 Install Synergy Engine</span>
+    <span style="font-size:11px;opacity:0.8" id="iosBannerHint" style="display:none">iPhone: tap Share → "Add to Home Screen"</span>
+  </div>
+  <button onclick="installApp()" id="installActionBtn">Install</button>
   <button class="close-banner" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
 </div>
 
@@ -1970,17 +1976,58 @@ function toast(msg) {
 // ════════════════════════════════════════
 // PWA INSTALL
 // ════════════════════════════════════════
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault(); deferredPrompt=e;
-  document.getElementById('installBanner').classList.add('show');
-});
-function installApp() {
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(()=>{ deferredPrompt=null; document.getElementById('installBanner').classList.remove('show'); });
+// ══ PWA: Service Worker Registration ══
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => {
+        console.log('[Synergy] SW registered:', reg.scope);
+        // Check for updates every 60s
+        setInterval(() => reg.update(), 60000);
+      })
+      .catch(err => console.warn('[Synergy] SW failed:', err));
+  });
 }
-window.addEventListener('appinstalled',()=>{ document.getElementById('installBanner').classList.remove('show'); toast('✓ Synergy installed!'); });
+
+// ══ PWA: Install Banner ══
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show banner after 2s delay
+  setTimeout(() => {
+    document.getElementById('installBanner').classList.add('show');
+  }, 2000);
+});
+
+function installApp() {
+  if (!deferredPrompt) {
+    // iOS instructions
+    toast('On iPhone: tap Share → "Add to Home Screen"');
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(choice => {
+    deferredPrompt = null;
+    document.getElementById('installBanner').classList.remove('show');
+    if (choice.outcome === 'accepted') toast('✓ Synergy installed successfully!');
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  toast('✓ Synergy is now on your home screen!');
+});
+
+// ══ PWA: Handle deep links from app shortcuts ══
+(function handleDeepLink() {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  if (tab && ['overview','sleep','insights'].includes(tab)) {
+    // Will run after init()
+    window._startTab = tab;
+  }
+})();
 
 // ════════════════════════════════════════
 // INIT
@@ -2018,11 +2065,31 @@ function init() {
   renderAll();
   updateSleepCalc();
   // Request notification permission on load
-  if('Notification' in window && Notification.permission==='default') {
-    setTimeout(()=>Notification.requestPermission(),3000);
+  if ('Notification' in window && Notification.permission === 'default') {
+    setTimeout(() => Notification.requestPermission(), 3000);
+  }
+  // Handle deep link from app shortcuts
+  if (window._startTab) {
+    setTimeout(() => showTab(window._startTab), 100);
   }
 }
 init();
+
+// iOS PWA detection — show correct install instruction
+(function detectiOS() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isIOS && !isInStandaloneMode) {
+    // Show banner with iOS instructions after 3s
+    setTimeout(() => {
+      document.getElementById('installBanner').classList.add('show');
+      document.getElementById('iosBannerHint').style.display = 'block';
+      const btn = document.getElementById('installActionBtn');
+      if (btn) btn.textContent = 'How to Install';
+    }, 3000);
+  }
+})();
+
 </script>
 </body>
 </html>

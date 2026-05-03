@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="38" fill="#0a0a0f"/>
+  <rect width="192" height="64" rx="0" fill="#0a0a0f"/>
+  <rect x="0" y="0" width="192" height="3" rx="0" fill="url(#g1)"/>
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="192" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2dd4a0"/>
+      <stop offset="100%" stop-color="#7c6ff7"/>
+    </linearGradient>
+  </defs>
+  <text x="96" y="110" text-anchor="middle" dominant-baseline="middle"
+    font-family="Arial Black, sans-serif" font-weight="900" font-size="80"
+    fill="#f0f0f8">S</text>
+  <text x="96" y="155" text-anchor="middle" dominant-baseline="middle"
+    font-family="Arial, sans-serif" font-weight="400" font-size="23"
+    fill="#7c6ff7" letter-spacing="2">SYNERGY</text>
+</svg>

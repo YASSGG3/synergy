@@ -1,0 +1,50 @@
+{
+  "name": "Synergy Engine",
+  "short_name": "Synergy",
+  "description": "Energy-based life management — balance your Cognitive, Physical, Spiritual & Recovery pillars",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "lang": "en",
+  "categories": ["health", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Today's Overview",
+      "short_name": "Overview",
+      "description": "Jump to today's energy dashboard",
+      "url": "/?tab=overview",
+      "icons": [{ "src": "icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Sleep Tracker",
+      "short_name": "Sleep",
+      "description": "Set your alarm and track sleep",
+      "url": "/?tab=sleep",
+      "icons": [{ "src": "icon-192.svg", "sizes": "192x192" }]
+    }
+  ]
+}
