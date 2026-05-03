@@ -5,11 +5,12 @@
 
 const CACHE_NAME = 'synergy-v1';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.svg',
-  '/icon-512.svg',
+const STATIC_ASSETS = [
+  '/synergy-engine/',
+  '/synergy-engine/index.html',
+  '/synergy-engine/manifest.json',
+  '/synergy-engine/icon-192.svg',
+  '/synergy-engine/icon-512.svg',
   'https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap'
 ];
 
